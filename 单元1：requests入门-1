@@ -1,4 +1,7 @@
+#win下cmd 敲入 pip install requests
+
 #测试安装requests库是否成功
+
 >>> import requests
 >>> r = requests.get("http://www.baidu.com")
 >>> r.status_code
