@@ -59,12 +59,40 @@ Requests库的head()方法
 ''
 
 
+Requests库的post()方法
+>>>payload = {'key1':'value1','key2':'value2'}
+>>>r = requests.post('http://httpbin.org/post',data = payload)
+>>>print(r.text)
+？？？
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<title>405 Method Not Allowed</title>
+<h1>Method Not Allowed</h1>
+<p>The method is not allowed for the requested URL.</p>
+？？？
+
+{ ...
+  "form=":{
+       "key2":"value2",
+       "key1":"value1"
+   },
+ }
+
+#向URLPOST一个字典自动编码为form（表单）
 
 
 
+>>>r = requests.post('http://httpbin.org/post',data = "ABC")
+>>>print(r.text)
+
+#向URLPOST一个字符串自动编码为data
 
 
 
+Requests库的put()方法
+
+>>>payload = {'key1':'value1','key2':'value2'}
+>>>r = requests.put('http://httpbin.org/put',data = payload)
+>>>print(r.text)
 
 
 
