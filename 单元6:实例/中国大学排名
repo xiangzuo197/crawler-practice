@@ -1,0 +1,164 @@
+功能描述
+输入:大学排名URL链接
+输出:大学排名信息的屏幕输出(排名，大学名称，总分)
+技术路线:requests-bs4
+
+定向爬虫：仅对输入URL进行爬取，不扩展爬取
+
+#不是动态获取脚本信息
+http://www.zuihaodaxue.cn/robots.txt(查看robots协议)
+
+程序得结构设计
+步骤1：从网络上获取大学排名网页内容
+步骤2：提取网页内容中信息得到合适得数据结构
+步骤3：利用数据结构展示并输出结果
+
+二维数据：二维列表
+
+程序得结构设计
+步骤1:从网络上获取大学排名网页内容getHTMLText()
+步骤2：提取网页内容中信息到合适的数据结构fillUnivList()
+步骤3：利用数据结构展示并输出结果printUnivList()
+
+实列编写
+import requests
+from bs4 import BeautifulSoup
+import bs4
+
+def getHTMLText(url):
+    try:
+        r = requests.get(url,timeout = 30)
+        r.raise_for_status()
+        r.encoding = r.apparent_encoding
+        return r.text
+    except:
+        return " "
+
+
+def fillUnivList(ulist,html):
+    soup = BeautifulSoup(html,"html.parser")
+    for tr in soup.find('tbody').children:
+        if isinstance(tr,bs4.element.Tag):
+            if isinstance(tr,bs4.element.Tag):
+                tds = tr('td')
+                ulist.append([tds[0].string,tds[1].string,tds[2].string])
+        
+    
+
+def printUnivList(ulist,num):
+    print("{:^10}\t{:^6}\t{:^10}".format("排名","学校名称","总分"))
+    for i in range(num):
+        u = ulist[i]
+        print("{:^10}\t{:^6}\t{:^10}".format(u[0],u[1],u[2]))
+   
+
+def main():
+    uinfo = []
+    url = 'http://www.zuihaodaxue.com/zuihaodaxuepaiming2016.html'
+    html = getHTMLText(url)
+    fillUnivList(uinfo,html)
+    printUnivList(uinfo,20)
+main()
+  排名    	 学校名称 	    总分    
+    1     	 清华大学 	   北京市    
+    2     	 北京大学 	   北京市    
+    3     	 浙江大学 	   浙江省    
+    4     	上海交通大学	   上海市    
+    5     	 复旦大学 	   上海市    
+    6     	 南京大学 	   江苏省    
+    7     	中国科学技术大学	   安徽省    
+    8     	哈尔滨工业大学	   黑龙江省   
+    9     	华中科技大学	   湖北省    
+    10    	 中山大学 	   广东省    
+    11    	 东南大学 	   江苏省    
+    12    	 天津大学 	   天津市    
+    13    	 同济大学 	   上海市    
+    14    	北京航空航天大学	   北京市    
+    15    	 四川大学 	   四川省    
+    16    	 武汉大学 	   湖北省    
+    17    	西安交通大学	   陕西省    
+    18    	 南开大学 	   天津市    
+    19    	大连理工大学	   辽宁省    
+    20    	 山东大学 	   山东省    
+
+
+
+优化排名
+#当中文字符宽度不够时，采用西文字符填充；中西字符占用宽度不同
+#中文对齐问题
+采用中文字符的空格填充chr(12288)
+
+import requests
+from bs4 import BeautifulSoup
+import bs4
+
+def getHTMLText(url):
+    try:
+        r = requests.get(url,timeout = 30)
+        r.raise_for_status()
+        r.encoding = r.apparent_encoding
+        return r.text
+    except:
+        return " "
+
+
+def fillUnivList(ulist,html):
+    soup = BeautifulSoup(html,"html.parser")
+    for tr in soup.find('tbody').children:
+        if isinstance(tr,bs4.element.Tag):
+            if isinstance(tr,bs4.element.Tag):
+                tds = tr('td')
+                ulist.append([tds[0].string,tds[1].string,tds[2].string])
+        
+    
+
+def printUnivList(ulist,num):
+    tplt = "{0:^10}\t{1:{3}^10}\t{2:^10}"
+    print(tplt.format("排名","学校名称","总分",chr(12288)))
+    for i in range(num):
+        u = ulist[i]
+        print(tplt.format(u[0],u[1],u[2],chr(12288)))
+   
+
+def main():
+    uinfo = []
+    url = 'http://www.zuihaodaxue.com/zuihaodaxuepaiming2016.html'
+    html = getHTMLText(url)
+    fillUnivList(uinfo,html)
+    printUnivList(uinfo,20)
+main()
+>>>    
+    排名    	　　　学校名称　　　	    总分    
+    1     	　　　清华大学　　　	   北京市    
+    2     	　　　北京大学　　　	   北京市    
+    3     	　　　浙江大学　　　	   浙江省    
+    4     	　　上海交通大学　　	   上海市    
+    5     	　　　复旦大学　　　	   上海市    
+    6     	　　　南京大学　　　	   江苏省    
+    7     	　中国科学技术大学　	   安徽省    
+    8     	　哈尔滨工业大学　　	   黑龙江省   
+    9     	　　华中科技大学　　	   湖北省    
+    10    	　　　中山大学　　　	   广东省    
+    11    	　　　东南大学　　　	   江苏省    
+    12    	　　　天津大学　　　	   天津市    
+    13    	　　　同济大学　　　	   上海市    
+    14    	　北京航空航天大学　	   北京市    
+    15    	　　　四川大学　　　	   四川省    
+    16    	　　　武汉大学　　　	   湖北省    
+    17    	　　西安交通大学　　	   陕西省    
+    18    	　　　南开大学　　　	   天津市    
+    19    	　　大连理工大学　　	   辽宁省    
+    20    	　　　山东大学　　　	   山东省    
+
+
+
+
+
+
+
+
+
+
+
+
+
